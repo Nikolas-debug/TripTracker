@@ -34,6 +34,7 @@ const TRAZOS = {
     check: 'M4 12.5 9 17.5 20 6.5',
     flecha: 'M5 12h14M13 6l6 6-6 6',
     atras: 'M19 12H5M11 6l-6 6 6 6',
+    soporte: 'M21 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-5A8 8 0 1 1 21 12Z',
 }
 </script>
 

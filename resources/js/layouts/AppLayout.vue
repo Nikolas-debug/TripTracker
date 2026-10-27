@@ -144,9 +144,22 @@ onMounted(contarPendientes)
                 </router-link>
             </nav>
 
-            <p class="mt-auto px-6 pb-3 pt-6 text-[11px] leading-snug text-[var(--color-tenue)]">
-                TripTracker para Grup Tous<br>Desarrollado por Blue Whale Labs
-            </p>
+            <div class="mt-auto flex items-end gap-2 pb-3 pl-6 pr-4 pt-6">
+                <p class="text-[11px] leading-snug text-[var(--color-tenue)]">
+                    TripTracker para Grup Tous<br>Desarrollado por Blue Whale Labs
+                </p>
+                <!-- Etapa de pruebas: chat directo con el desarrollador. Quitar al pasar a producción. -->
+                <a
+                    href="https://wa.me/573012562445?text=Hola%2C%20necesito%20soporte%20con%20TripTracker"
+                    target="_blank"
+                    rel="noopener"
+                    class="ml-auto flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-[#25d366] px-3 text-[12.5px] font-medium text-[var(--color-bosque)] shadow-[0_1px_3px_rgb(24_29_38/0.18)] hover:brightness-95"
+                    title="Escribir por WhatsApp al 301 256 2445"
+                >
+                    <Icono nombre="soporte" :tamano="15" />
+                    Soporte
+                </a>
+            </div>
 
             <div class="flex items-center gap-3 border-t border-[var(--color-borde)] px-5 py-4" style="padding-bottom: calc(1rem + env(safe-area-inset-bottom))">
                 <div class="flex size-8 items-center justify-center rounded-full bg-[var(--color-menta)] text-[12px] font-medium text-[var(--color-bosque)]">
