@@ -30,8 +30,11 @@ const buscandoTarifa = ref(false)
 const errorTarifa = ref('')
 
 function nuevaFila() {
-    return { volqueta_id: '', m3: '', conductor_id: '' }
+    return { volqueta_id: '', m3: '', cantidad: 1, conductor_id: '' }
 }
+
+/** Una fila puede valer varios viajes: la misma placa con los mismos m³. */
+const cantidadDe = (f) => Math.max(1, Number(f.cantidad) || 1)
 
 const esRetiro = computed(() => cabecera.tipo_viaje === 'retiro')
 
@@ -42,6 +45,8 @@ const rutaCompleta = computed(() =>
 const filasValidas = computed(() =>
     filas.value.filter((f) => f.volqueta_id && Number(f.m3) > 0),
 )
+
+const totalViajes = computed(() => filasValidas.value.reduce((s, f) => s + cantidadDe(f), 0))
 
 /** El par cantera–material elegido: trae el precio del material por m³. */
 const canteraMaterial = computed(() =>
@@ -55,10 +60,10 @@ const faltaPrecioMaterial = computed(() => canteraMaterial.value && canteraMater
 const totales = computed(() => {
     if (!tarifa.value) return { m3: 0, flete: 0, material: 0, cobro: 0 }
 
-    const m3 = filasValidas.value.reduce((s, f) => s + Number(f.m3), 0)
+    const m3 = filasValidas.value.reduce((s, f) => s + Number(f.m3) * cantidadDe(f), 0)
     const flete = tarifa.value.unidad === 'm3'
         ? tarifa.value.valor * m3
-        : tarifa.value.valor * filasValidas.value.length
+        : tarifa.value.valor * totalViajes.value
     const material = (canteraMaterial.value?.precio_compra_m3 ?? 0) * m3
 
     return { m3, flete, material, cobro: flete + material }
@@ -139,6 +144,7 @@ async function guardar() {
             viajes: filasValidas.value.map((f) => ({
                 volqueta_id: f.volqueta_id,
                 m3: Number(f.m3),
+                cantidad: cantidadDe(f),
                 conductor_id: f.conductor_id || null,
             })),
         })
@@ -181,7 +187,7 @@ onMounted(async () => {
         <div class="ml-auto flex items-center gap-2">
             <button class="boton-secundario" @click="router.back()">Cancelar</button>
             <button class="boton-primario" :disabled="guardando || !tarifa || faltaPrecioMaterial || !filasValidas.length" @click="guardar">
-                {{ guardando ? 'Guardando…' : `Guardar ${filasValidas.length} viajes` }}
+                {{ guardando ? 'Guardando…' : `Guardar ${totalViajes} viajes` }}
             </button>
         </div>
     </header>
@@ -306,7 +312,8 @@ onMounted(async () => {
                         <th class="w-11 py-2 pl-5 pr-2.5">#</th>
                         <th class="w-56 px-2.5 py-2">PLACA</th>
                         <th class="px-2.5 py-2">DUEÑO</th>
-                        <th class="w-28 px-2.5 py-2">M³</th>
+                        <th class="w-28 px-2.5 py-2">M³ POR VIAJE</th>
+                        <th class="w-24 px-2.5 py-2">VIAJES</th>
                         <th class="w-11 py-2 pl-2.5 pr-5"></th>
                     </tr>
                 </thead>
@@ -338,6 +345,16 @@ onMounted(async () => {
                                 @keyup.enter="alPresionarEnter(i)"
                             >
                         </td>
+                        <td class="px-2.5 py-2">
+                            <input
+                                v-model="fila.cantidad"
+                                type="number"
+                                min="1"
+                                max="30"
+                                class="campo py-1.5"
+                                @keyup.enter="alPresionarEnter(i)"
+                            >
+                        </td>
                         <td class="py-2 pl-2.5 pr-5">
                             <button class="text-[var(--color-tenue)] hover:text-[var(--color-critico)]" @click="quitarFila(i)"><Icono nombre="x" :tamano="16" /></button>
                         </td>
@@ -352,7 +369,7 @@ onMounted(async () => {
 
             <div class="flex items-center gap-7 border-t border-[var(--color-borde)] bg-[var(--color-superficie-sutil)] px-5 py-3.5">
                 <p class="text-[12.5px] text-[var(--color-apagado)]">
-                    Viajes <span class="cifra ml-1 text-[15px] font-medium text-[var(--color-tinta)]">{{ filasValidas.length }}</span>
+                    Viajes <span class="cifra ml-1 text-[15px] font-medium text-[var(--color-tinta)]">{{ totalViajes }}</span>
                 </p>
                 <p class="text-[12.5px] text-[var(--color-apagado)]">
                     Metros cúbicos <span class="cifra ml-1 text-[15px] font-medium text-[var(--color-tinta)]">{{ totales.m3 }}</span>

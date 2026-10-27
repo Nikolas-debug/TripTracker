@@ -43,6 +43,8 @@ class RegistrarViajesRequest extends FormRequest
             'viajes' => ['required', 'array', 'min:1', 'max:200'],
             'viajes.*.volqueta_id' => ['required', 'exists:volquetas,id'],
             'viajes.*.m3' => ['required', 'integer', 'min:1', 'max:60'],
+            // m³ de CADA viaje: la fila se multiplica en esa cantidad de viajes.
+            'viajes.*.cantidad' => ['nullable', 'integer', 'min:1', 'max:30'],
             'viajes.*.conductor_id' => ['nullable', 'exists:terceros,id'],
             'viajes.*.observaciones' => ['nullable', 'string', 'max:500'],
         ];

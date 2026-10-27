@@ -47,6 +47,23 @@ it('congela los valores de la tarifa en el viaje', function () {
         ->and($viaje->margen())->toBe(150_000);
 });
 
+it('una fila con cantidad registra esa cantidad de viajes', function () {
+    $viajes = app(RegistrarViajes::class)(
+        cabecera: [
+            'obra_id' => $this->escenario['obra']->id,
+            'tipo_viaje' => TipoViaje::Suministro->value,
+            'fecha_viaje' => '2026-08-25',
+            'cantera_material_id' => $this->escenario['cantera_material']->id,
+        ],
+        filas: [['volqueta_id' => $this->escenario['volqueta']->id, 'm3' => 14, 'cantidad' => 5]],
+        usuario: $this->escenario['usuario'],
+    );
+
+    expect($viajes)->toHaveCount(5)
+        ->and($viajes->pluck('m3_registrado')->unique()->all())->toBe([14]);
+    assertDatabaseCount('viajes', 5);
+});
+
 it('no reescribe viajes ya registrados cuando sube la tarifa', function () {
     $viaje = app(RegistrarViajes::class)(
         cabecera: [

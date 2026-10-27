@@ -30,7 +30,7 @@ class RegistrarViajes
 
     /**
      * @param  array{obra_id:int, tipo_viaje:string, fecha_viaje:string, cantera_material_id?:int|null, botadero_id?:int|null}  $cabecera
-     * @param  array<int, array{volqueta_id:int, m3:int, conductor_id?:int|null, observaciones?:string|null}>  $filas
+     * @param  array<int, array{volqueta_id:int, m3:int, cantidad?:int, conductor_id?:int|null, observaciones?:string|null}>  $filas
      * @return Collection<int, Viaje>
      */
     public function __invoke(array $cabecera, array $filas, User $usuario): Collection
@@ -78,9 +78,12 @@ class RegistrarViajes
                     'observaciones' => $fila['observaciones'] ?? null,
                 ];
 
-                $viajes->push(Viaje::create(
-                    $atributos + $this->pago($volqueta, $conductorId, $tipoViaje, $obraId, $canteraId, $botaderoId, $materialId, $fecha)
-                ));
+                $atributos += $this->pago($volqueta, $conductorId, $tipoViaje, $obraId, $canteraId, $botaderoId, $materialId, $fecha);
+
+                // "La UB500 hizo 5 viajes": una fila, cinco viajes de esos m³ cada uno.
+                for ($i = 0; $i < (int) ($fila['cantidad'] ?? 1); $i++) {
+                    $viajes->push(Viaje::create($atributos));
+                }
             }
 
             return $viajes;
