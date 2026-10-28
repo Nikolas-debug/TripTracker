@@ -25,6 +25,9 @@
              están garantizadas con CHECK constraints y un índice único parcial
              que sqlite no reproduce igual. -->
         <env name="DB_CONNECTION" value="pgsql"/>
+        <!-- Vacío a propósito: un DB_URL en .env pisa DB_DATABASE y los tests
+             (RefreshDatabase) borrarían esa base. -->
+        <env name="DB_URL" value="" force="true"/>
         <env name="DB_DATABASE" value="sistema_viajes_test"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>

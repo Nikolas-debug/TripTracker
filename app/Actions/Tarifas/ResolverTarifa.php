@@ -22,7 +22,9 @@ use Illuminate\Support\Carbon;
  *               2) obra + cantera              (el caso normal)
  *   retiro:     1) obra + botadero
  *
- * En las tarifas de pago la búsqueda incluye al dueño o al conductor.
+ * En las tarifas de pago la búsqueda incluye al dueño o al conductor. El pago
+ * al dueño, si no tiene una pactada aparte, cae a la tarifa general de la ruta
+ * (sin tercero): la que se le paga igual a todos.
  */
 class ResolverTarifa
 {
@@ -61,23 +63,27 @@ class ResolverTarifa
     ): ?Tarifa {
         $fecha = $fecha ? Carbon::parse($fecha) : Carbon::today();
 
-        foreach ($this->candidatas($tipoViaje, $canteraId, $botaderoId, $materialId) as $criterio) {
-            $tarifa = Tarifa::query()
-                ->where('tipo', $tipo)
-                ->where('tipo_viaje', $tipoViaje)
-                ->where('obra_id', $obraId)
-                ->when(
-                    $tipo === TipoTarifa::Cobro,
-                    fn (Builder $q) => $q->whereNull('tercero_id'),
-                    fn (Builder $q) => $q->where('tercero_id', $terceroId),
-                )
-                ->where(fn (Builder $q) => $this->aplicarCriterio($q, $criterio))
-                ->vigenteEn($fecha)
-                ->orderByDesc('fecha_inicio')
-                ->first();
+        // La pactada con ese tercero gana; la general de la ruta es el respaldo.
+        $terceros = match ($tipo) {
+            TipoTarifa::Cobro => [null],
+            TipoTarifa::PagoPropietario => [$terceroId, null],
+            TipoTarifa::PagoConductor => [$terceroId],
+        };
 
-            if ($tarifa !== null) {
-                return $tarifa;
+        foreach ($terceros as $tercero) {
+            foreach ($this->candidatas($tipoViaje, $canteraId, $botaderoId, $materialId) as $criterio) {
+                $tarifa = Tarifa::query()
+                    ->where('tipo', $tipo)
+                    ->where('tipo_viaje', $tipoViaje)
+                    ->where('obra_id', $obraId)
+                    ->where(fn (Builder $q) => $this->aplicarCriterio($q, $criterio + ['tercero_id' => $tercero]))
+                    ->vigenteEn($fecha)
+                    ->orderByDesc('fecha_inicio')
+                    ->first();
+
+                if ($tarifa !== null) {
+                    return $tarifa;
+                }
             }
         }
 

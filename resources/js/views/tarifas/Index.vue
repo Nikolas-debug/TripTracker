@@ -215,7 +215,7 @@ onMounted(async () => {
                                     {{ TIPOS[tarifa.tipo]?.texto ?? tarifa.tipo }}
                                 </span>
                             </td>
-                            <td class="px-2.5 py-2.5">{{ tarifa.tercero ?? 'Consorcio de la obra' }}</td>
+                            <td class="px-2.5 py-2.5">{{ tarifa.tercero ?? (tarifa.tipo === 'cobro' ? 'Consorcio de la obra' : 'Todos los dueños') }}</td>
                             <td class="cifra px-2.5 py-2.5 text-right font-medium">
                                 <template v-if="tarifa.unidad === 'porcentaje'">
                                     {{ tarifa.porcentaje }}%
@@ -367,9 +367,9 @@ onMounted(async () => {
                 </div>
 
                 <div v-if="!esCobro">
-                    <label class="etiqueta">{{ esConductor ? 'Conductor' : 'Dueño de la volqueta' }} <span class="text-[var(--color-critico)]">*</span></label>
-                    <select v-model="nueva.datos.tercero_id" class="campo" required>
-                        <option value="">Seleccionar…</option>
+                    <label class="etiqueta">{{ esConductor ? 'Conductor' : 'Dueño de la volqueta' }} <span v-if="esConductor" class="text-[var(--color-critico)]">*</span></label>
+                    <select v-model="nueva.datos.tercero_id" class="campo" :required="esConductor">
+                        <option value="">{{ esConductor ? 'Seleccionar…' : 'Todos (tarifa general de la ruta)' }}</option>
                         <option v-for="t in listas.terceros" :key="t.id" :value="t.id">
                             {{ t.nombre_completo ?? [t.nombre, t.apellido].filter(Boolean).join(' ') }}
                         </option>

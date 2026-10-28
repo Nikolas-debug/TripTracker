@@ -34,8 +34,8 @@ class TarifaRequest extends FormRequest
             // Solo para una excepción de precio en un material puntual de esa ruta.
             'material_id' => [Rule::prohibitedIf($esRetiro), 'nullable', 'exists:materiales,id'],
 
-            // Las tarifas de pago siempre son con alguien.
-            'tercero_id' => [Rule::requiredIf(! $esCobro), Rule::prohibitedIf($esCobro), 'nullable', 'exists:terceros,id'],
+            // El conductor siempre es alguien. Al dueño, vacío = tarifa general de la ruta.
+            'tercero_id' => [Rule::requiredIf($esConductor), Rule::prohibitedIf($esCobro), 'nullable', 'exists:terceros,id'],
 
             'unidad' => ['required', Rule::enum(UnidadTarifa::class)],
             'valor' => [Rule::requiredIf(! $esConductor), 'nullable', 'integer', 'min:0'],
@@ -77,7 +77,7 @@ class TarifaRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'tercero_id.required' => 'Una tarifa de pago se pacta con un dueño o un conductor.',
+            'tercero_id.required' => 'El pago al conductor se pacta con un conductor.',
             'tercero_id.prohibited' => 'La tarifa de cobro es con el consorcio de la obra, no con un tercero.',
             'valor_base.required' => 'El pago al conductor es un porcentaje sobre una base fija.',
         ];

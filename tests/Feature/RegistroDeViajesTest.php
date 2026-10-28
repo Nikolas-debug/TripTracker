@@ -114,6 +114,38 @@ it('falla el lote entero si una ruta no tiene tarifa pactada', function () {
     assertDatabaseCount('viajes', 0);
 });
 
+it('sin tarifa propia, al dueño se le paga la general de la ruta', function () {
+    Tarifa::create([
+        'tipo' => TipoTarifa::PagoPropietario,
+        'tipo_viaje' => TipoViaje::Suministro,
+        'obra_id' => $this->escenario['obra']->id,
+        'cantera_id' => $this->escenario['cantera']->id,
+        'valor' => 190_000,
+        'unidad' => UnidadTarifa::Viaje,
+        'fecha_inicio' => '2026-08-01',
+    ]);
+
+    $otro = App\Models\Tercero::create(['nombre' => 'Luis', 'apellido' => 'Mora', 'cedula' => '10000003']);
+    $volquetaOtro = App\Models\Volqueta::create(['placa' => 'XYZ123', 'propietario_id' => $otro->id, 'capacidad_m3' => 14]);
+
+    $viajes = app(RegistrarViajes::class)(
+        cabecera: [
+            'obra_id' => $this->escenario['obra']->id,
+            'tipo_viaje' => TipoViaje::Suministro->value,
+            'fecha_viaje' => '2026-08-25',
+            'cantera_material_id' => $this->escenario['cantera_material']->id,
+        ],
+        filas: [
+            ['volqueta_id' => $volquetaOtro->id, 'm3' => 14],
+            ['volqueta_id' => $this->escenario['volqueta']->id, 'm3' => 14],
+        ],
+        usuario: $this->escenario['usuario'],
+    );
+
+    // El que tiene tarifa pactada conserva la suya.
+    expect($viajes->pluck('valor_pago_unitario')->all())->toBe([190_000, 200_000]);
+});
+
 it('paga por porcentaje cuando la volqueta es de la empresa', function () {
     Tarifa::create([
         'tipo' => TipoTarifa::PagoConductor,
