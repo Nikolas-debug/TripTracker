@@ -2,15 +2,17 @@
 
 namespace App\Policies;
 
+use App\Enums\TipoTarifa;
 use App\Enums\UnidadTarifa;
 use App\Models\Tarifa;
 use App\Models\User;
 
 class TarifaPolicy
 {
-    public function create(User $usuario): bool
+    /** Lo que se le cobra al consorcio lo pacta solo el administrador. */
+    public function create(User $usuario, TipoTarifa $tipo): bool
     {
-        return $usuario->esAdministrador();
+        return $tipo !== TipoTarifa::Cobro || $usuario->esAdministrador();
     }
 
     /**

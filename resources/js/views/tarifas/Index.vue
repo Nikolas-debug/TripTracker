@@ -81,7 +81,7 @@ const esCobro = computed(() => nueva.datos.tipo === 'cobro')
 
 function abrirNueva() {
     nueva.datos = {
-        tipo: 'cobro',
+        tipo: auth.esAdministrador ? 'cobro' : 'pago_propietario',
         tipo_viaje: 'suministro',
         obra_id: obraId.value || '',
         cantera_id: '',
@@ -176,7 +176,7 @@ onMounted(async () => {
                 <option value="">Todas las obras</option>
                 <option v-for="obra in obras" :key="obra.id" :value="obra.id">{{ obra.nombre }}</option>
             </select>
-            <button v-if="auth.esAdministrador" class="boton-primario" @click="abrirNueva">
+            <button class="boton-primario" @click="abrirNueva">
                 <Icono nombre="mas" :tamano="16" /> Nueva tarifa
             </button>
         </template>
@@ -291,7 +291,7 @@ onMounted(async () => {
             </div>
         </div>
     </div>
-    <!-- Nueva tarifa (solo administrador; el backend también lo exige) -->
+    <!-- Nueva tarifa (la de cobro solo el administrador; el backend también lo exige) -->
     <div v-if="nueva.abierta" class="velo fixed inset-0 z-40 flex items-end justify-center sm:items-center sm:p-6" @click.self="nueva.abierta = false">
         <form class="flotante dialogo flex max-h-[92dvh] w-full max-w-[520px] flex-col" @submit.prevent="guardarNueva">
             <div class="flex items-start border-b border-[var(--color-borde)] px-5 py-4">
@@ -325,7 +325,7 @@ onMounted(async () => {
                     <div>
                         <label class="etiqueta">Tipo de tarifa</label>
                         <select v-model="nueva.datos.tipo" class="campo">
-                            <option value="cobro">Cobro al consorcio</option>
+                            <option v-if="auth.esAdministrador" value="cobro">Cobro al consorcio</option>
                             <option value="pago_propietario">Pago al dueño</option>
                             <option value="pago_conductor">Pago al conductor (volqueta propia)</option>
                         </select>

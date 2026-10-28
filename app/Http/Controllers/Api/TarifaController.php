@@ -33,7 +33,7 @@ class TarifaController extends Controller
 
     public function store(TarifaRequest $request): JsonResponse
     {
-        $this->authorize('create', Tarifa::class);
+        $this->authorize('create', [Tarifa::class, TipoTarifa::from($request->validated('tipo'))]);
 
         $tarifa = Tarifa::create($request->validated() + ['creado_por' => $request->user()->id]);
 
