@@ -18,6 +18,8 @@ class Tercero extends Model
 
     protected $fillable = ['nombre', 'apellido', 'cedula', 'telefono', 'activo'];
 
+    protected $appends = ['nombre_completo'];
+
     protected function casts(): array
     {
         return ['activo' => 'boolean'];
