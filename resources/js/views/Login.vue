@@ -36,7 +36,7 @@ async function entrar() {
                     <Icono nombre="viajes" :tamano="22" />
                 </div>
                 <div class="leading-tight">
-                    <div class="text-[20px]">TripTracker</div>
+                    <div class="text-[20px]">Cargo</div>
                     <div class="text-[13px] text-white/65">Logística de viajes y materiales</div>
                 </div>
             </div>
@@ -61,7 +61,7 @@ async function entrar() {
                     <div class="flex size-10 items-center justify-center rounded-xl bg-[var(--color-tinta)] text-white">
                         <Icono nombre="viajes" :tamano="20" />
                     </div>
-                    <span class="text-[18px]">TripTracker</span>
+                    <span class="text-[18px]">Cargo</span>
                 </div>
 
                 <h1 class="text-[32px] font-normal leading-tight tracking-[-0.01em]">Iniciar sesión</h1>
@@ -93,7 +93,7 @@ async function entrar() {
                 </p>
 
                 <p class="mt-10 text-center text-[12px] text-[var(--color-tenue)]">
-                    TripTracker para Grup Tous · Desarrollado por <span class="font-medium text-[var(--color-apagado)]">Blue Whale Labs</span>
+                    Cargo para Grup Tous · Desarrollado por <span class="font-medium text-[var(--color-apagado)]">Stonemills</span>
                 </p>
             </form>
         </div>

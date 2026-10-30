@@ -65,7 +65,7 @@ onMounted(contarPendientes)
             <button class="-ml-2 flex size-10 items-center justify-center rounded-full text-[var(--color-tinta)]" aria-label="Abrir menú" @click="menuAbierto = true">
                 <Icono nombre="menu" :tamano="20" />
             </button>
-            <span class="text-[15px] font-medium">TripTracker</span>
+            <span class="text-[15px] font-medium">Cargo</span>
             <router-link
                 v-if="pendientes"
                 :to="{ name: 'viajes', query: { estado: 'por_confirmar' } }"
@@ -90,7 +90,7 @@ onMounted(contarPendientes)
                     <Icono nombre="viajes" :tamano="18" />
                 </div>
                 <div class="leading-tight">
-                    <div class="text-[15px] font-medium">TripTracker</div>
+                    <div class="text-[15px] font-medium">Cargo</div>
                     <div class="text-[12px] text-[var(--color-tenue)]">Logística de viajes</div>
                 </div>
                 <button class="ml-auto flex size-9 items-center justify-center rounded-full text-[var(--color-apagado)] lg:hidden" aria-label="Cerrar menú" @click="menuAbierto = false">
@@ -146,11 +146,11 @@ onMounted(contarPendientes)
 
             <div class="mt-auto flex items-end gap-2 pb-3 pl-6 pr-4 pt-6">
                 <p class="text-[11px] leading-snug text-[var(--color-tenue)]">
-                    TripTracker para Grup Tous<br>Desarrollado por Blue Whale Labs
+                    Cargo para Grup Tous<br>Desarrollado por Stonemills
                 </p>
                 <!-- Etapa de pruebas: chat directo con el desarrollador. Quitar al pasar a producción. -->
                 <a
-                    href="https://wa.me/573012562445?text=Hola%2C%20necesito%20soporte%20con%20TripTracker"
+                    href="https://wa.me/573012562445?text=Hola%2C%20necesito%20soporte%20con%20Cargo"
                     target="_blank"
                     rel="noopener"
                     class="ml-auto flex h-8 shrink-0 items-center gap-1.5 rounded-full bg-[#25d366] px-3 text-[12.5px] font-medium text-[var(--color-bosque)] shadow-[0_1px_3px_rgb(24_29_38/0.18)] hover:brightness-95"

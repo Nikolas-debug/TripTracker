@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import api, { ponerToken } from '../lib/api'
 
 const CLAVE = 'gt_token'
+const CLAVE_USUARIO = 'gt_usuario'
 
 export const useAuth = defineStore('auth', {
     state: () => ({
@@ -25,8 +26,15 @@ export const useAuth = defineStore('auth', {
             try {
                 const { data } = await api.get('me')
                 this.usuario = data
-            } catch {
-                this.limpiar()
+                localStorage.setItem(CLAVE_USUARIO, JSON.stringify(data))
+            } catch (error) {
+                // Sin red (app instalada, sin señal): se sigue con el último
+                // usuario conocido. Solo un rechazo real del backend cierra sesión.
+                if (error.response) {
+                    this.limpiar()
+                } else {
+                    this.usuario = JSON.parse(localStorage.getItem(CLAVE_USUARIO) ?? 'null')
+                }
             }
         },
 
@@ -38,6 +46,7 @@ export const useAuth = defineStore('auth', {
                 this.token = data.token
                 this.usuario = data.usuario
                 localStorage.setItem(CLAVE, data.token)
+                localStorage.setItem(CLAVE_USUARIO, JSON.stringify(data.usuario))
                 ponerToken(data.token)
             } finally {
                 this.cargando = false
@@ -58,6 +67,7 @@ export const useAuth = defineStore('auth', {
             this.usuario = null
             this.token = null
             localStorage.removeItem(CLAVE)
+            localStorage.removeItem(CLAVE_USUARIO)
             ponerToken(null)
         },
     },

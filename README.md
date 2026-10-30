@@ -1,4 +1,4 @@
-# TripTracker — Grup Tous
+# Cargo — Grup Tous
 
 Logística de viajes de materiales para consorcios: registro de viajes,
 confirmación por vale y liquidación de cuentas.

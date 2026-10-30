@@ -36,6 +36,11 @@ api.interceptors.response.use(
  * (tarifa faltante, viaje bloqueado) traen `message` y ya están redactados.
  */
 export function mensajeDeError(error, porDefecto = 'Algo salió mal.') {
+    // Sin respuesta del todo: no hay red (la app abre sin ella, los datos no).
+    if (error.request && !error.response) {
+        return 'Sin conexión. Revisa el internet e intenta de nuevo.'
+    }
+
     const datos = error.response?.data
 
     if (datos?.errors) {
